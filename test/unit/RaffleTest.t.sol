@@ -14,6 +14,8 @@ contract RaffleTest is Test {
     uint256 public constant ENTRANCE_FEE = 0.01 ether;
     uint256 public constant START_BALANCE = 100 ether;
 
+    event EnterRaffle(address indexed _participant);
+
     function setUp() external {
         DeployRaffle deployer = new DeployRaffle();
         (raffle, helperConfig) = deployer.run();
@@ -36,5 +38,19 @@ contract RaffleTest is Test {
         vm.prank(s_player);
         vm.expectRevert(Raffle.Raffle__InsufficientEntranceFee.selector);
         raffle.enterRaffle();
+    }
+
+    function testRaffleRecordsPlayerWhenTheyEnter() public {
+        vm.prank(s_player);
+        raffle.enterRaffle{value: ENTRANCE_FEE}();
+        address _playerRecorded = raffle.getPlayer(0);
+        assert(_playerRecorded == s_player);
+    }
+
+    function testEmitsEventsOnEtnerRaffle() public {
+        vm.prank(s_player);
+        vm.expectEmit(true, false, false, false, address(raffle));
+        emit EnterRaffle(s_player);
+        raffle.enterRaffle{value: ENTRANCE_FEE}();
     }
 }

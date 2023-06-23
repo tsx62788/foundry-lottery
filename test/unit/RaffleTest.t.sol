@@ -19,6 +19,7 @@ contract RaffleTest is Test {
     bytes32 public keyHash;
     uint64 public subscriptionId;
     uint32 public callbackGasLimit;
+    address public linkTokenContract;
 
     event EnterRaffle(address indexed _participant);
 
@@ -31,7 +32,8 @@ contract RaffleTest is Test {
             vrfCoordinator,
             keyHash,
             subscriptionId,
-            callbackGasLimit
+            callbackGasLimit,
+            linkTokenContract
         ) = helperConfig.s_networkConfig();
         vm.deal(s_player, START_BALANCE);
     }

@@ -63,21 +63,12 @@ contract RaffleTest is Test {
     }
 
     function testDontAllowPlayersToEnterWhileRaffleIsCalculating() public {
-        // Arrange
         vm.prank(s_player);
+        raffle.enterRaffle{value: entranceFee}();
         vm.warp(block.timestamp + interval + 1);
         vm.roll(block.number + 1);
-        raffle.enterRaffle{value: entranceFee}();
         raffle.performUpkeep("");
-        // Act / Assert
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                Raffle.Raffle__UpkeepNotNeeded.selector,
-                address(raffle).balance,
-                0,
-                0
-            )
-        );
+        vm.expectRevert(Raffle.Raffle__InvalidTimestamp.selector);
         vm.prank(s_player);
         raffle.enterRaffle{value: entranceFee}();
     }

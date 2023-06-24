@@ -41,6 +41,7 @@ contract Raffle is VRFConsumerBaseV2 {
 
     event EnterRaffle(address indexed _participant);
     event WinnerPicked(address indexed _winner);
+    event RequestedRaffleWinner(uint256 indexed _requestId);
 
     constructor(
         uint256 _entranceFee,
@@ -99,13 +100,14 @@ contract Raffle is VRFConsumerBaseV2 {
             );
         }
         s_raffleState = RaffleState.CALCULATING;
-        i_vrfCoordinator.requestRandomWords(
+        uint256 _requestId = i_vrfCoordinator.requestRandomWords(
             i_keyHash,
             i_subscriptionId,
             REQUEST_CONFIRMATIONS,
             i_callbackGasLimit,
             NUM_WORDS
         );
+        emit RequestedRaffleWinner(_requestId);
         return true;
     }
 

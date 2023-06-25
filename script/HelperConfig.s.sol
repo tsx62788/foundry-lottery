@@ -14,8 +14,10 @@ contract HelperConfig is Script {
         uint64 subscriptionId;
         uint32 callbackGasLimit;
         address linkTokenContract;
+        uint256 deployKey;
     }
-
+    uint256 constant ANVIL_DEPLOY_KEY =
+        0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80;
     NetworkConfig public s_networkConfig;
 
     constructor() {
@@ -30,7 +32,7 @@ contract HelperConfig is Script {
 
     function getSepoliaConfig()
         public
-        pure
+        view
         returns (NetworkConfig memory networkConfig)
     {
         networkConfig = NetworkConfig(
@@ -40,7 +42,8 @@ contract HelperConfig is Script {
             0x474e34a077df58807dbe9c96d3c009b23b3c6d0cce433e59bbf5b34f823bc56c,
             768, // subscriptionId on Manager UI (https://vrf.chain.link/sepolia)
             500000,
-            0x779877A7B0D9E8603169DdbD7836e478b4624789
+            0x779877A7B0D9E8603169DdbD7836e478b4624789,
+            vm.envUint("PRIVATE_KEY") // read from .env
         );
     }
 
@@ -67,7 +70,8 @@ contract HelperConfig is Script {
             0x474e34a077df58807dbe9c96d3c009b23b3c6d0cce433e59bbf5b34f823bc56c,
             0,
             500000,
-            address(linkToken)
+            address(linkToken),
+            ANVIL_DEPLOY_KEY
         );
     }
 }

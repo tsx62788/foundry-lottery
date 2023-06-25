@@ -18,22 +18,25 @@ contract DeployRaffle is Script {
             bytes32 keyHash,
             uint64 subscriptionId,
             uint32 callbackGasLimit,
-            address linkTokenContract
+            address linkTokenContract,
+            uint256 deployKey
         ) = helperConfig.s_networkConfig();
         if (subscriptionId == 0) {
             CreateSubscription createSubscriptiontions = new CreateSubscription();
             subscriptionId = createSubscriptiontions.createSubscription(
-                vrfCoordinator
+                vrfCoordinator,
+                deployKey
             );
             console.log("subscriptionId: %d", subscriptionId);
             FundSubscription fundSubscription = new FundSubscription();
             fundSubscription.fundSubscription(
                 vrfCoordinator,
                 subscriptionId,
-                linkTokenContract
+                linkTokenContract,
+                deployKey
             );
         }
-        vm.startBroadcast();
+        vm.startBroadcast(deployKey);
         Raffle raffle = new Raffle(
             entranceFee,
             interval,
@@ -47,7 +50,8 @@ contract DeployRaffle is Script {
         addConsumer.addConsumer(
             vrfCoordinator,
             subscriptionId,
-            address(raffle)
+            address(raffle),
+            deployKey
         );
         return (raffle, helperConfig);
     }
